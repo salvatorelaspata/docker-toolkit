@@ -44,9 +44,43 @@ impl Engine {
             container.version,
             container.container_type,
         );
+
+        // let is_db = match container.container_type {
+        //     ContainerType::Db { db } => true,
+        //     _ => false,
+        // };
+
+        // if is_db {
+        //     // set user, password, db
+        //     // container.set_db_config(
+        //     //     String::from(" "),
+        //     //     String::from("container.password"),
+        //     //     String::from("container.db_name"),
+        //     // );
+        // } else {
+        //     // create app
+        // }
+        // container.set_db_config(
+        //     String::from(" "),
+        //     String::from("container.password"),
+        //     String::from("container.db_name"),
+        // );
         container.create();
+
         self.containers.push(container);
     }
+}
+
+// macro to create a new container
+macro_rules! create_container {
+    ($name:expr, $description:expr, $version:expr, $container_type:expr) => {
+        Container::new(
+            $name.to_string(),
+            $description.to_string(),
+            $version.to_string(),
+            $container_type,
+        )
+    };
 }
 
 fn main() {
@@ -63,34 +97,58 @@ fn main() {
     let now = Utc::now();
     let date_as_string = now.format("%Y%m%d%H%M%S").to_string();
 
-    let db_name = format!("{}--{}", String::from("postgres"), date_as_string);
-    let app_name = format!("{}--{}", String::from("nodejs"), date_as_string);
-    println!("DB Name: {}", db_name);
-    println!("App Name: {}", app_name);
-    let postgres = Container::new(
-        db_name,
-        "Postgres Database".to_string(),
-        "latest".to_string(),
-        ContainerType::Db {
-            db: DbType::PostgreSQL,
-        },
+    let mysql = create_container!(
+        format!("{}--{}", String::from("mysql"), date_as_string),
+        // "admin",
+        // "admin",
+        // "mydb",
+        "MySQL Database",
+        "latest",
+        ContainerType::Db { db: DbType::MySQL }
     );
 
-    let nodejs = Container::new(
-        app_name,
-        "".to_string(),
-        "latest".to_string(),
-        ContainerType::App {
-            runtime: AppRuntime::Node,
-        },
+    let postgres = create_container!(
+        format!("{}--{}", String::from("postgres"), date_as_string),
+        // "admin",
+        // "admin",
+        // "mydb",
+        "Postgres Database",
+        "latest",
+        ContainerType::Db {
+            db: DbType::PostgreSQL
+        }
+    );
+
+    let mongodb = create_container!(
+        format!("{}--{}", String::from("mongodb"), date_as_string),
+        // "admin",
+        // "admin",
+        // "mydb",
+        "MongoDB Database",
+        "latest",
+        ContainerType::Db {
+            db: DbType::MongoDB
+        }
+    );
+
+    let redis = create_container!(
+        format!("{}--{}", String::from("redis"), date_as_string),
+        // "admin",
+        // "admin",
+        // "mydb",
+        "Redis Database",
+        "latest",
+        ContainerType::Db { db: DbType::Redis }
     );
 
     // nodejs.create();
 
     let mut engine = Engine::new();
+    // db
     engine.create_container(postgres);
-
-    engine.create_container(nodejs);
+    engine.create_container(mongodb);
+    engine.create_container(redis);
+    engine.create_container(mysql);
 
     engine.ps();
 

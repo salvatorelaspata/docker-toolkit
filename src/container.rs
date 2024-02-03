@@ -37,8 +37,8 @@ impl Container {
                 // create not referenced db
                 let mut _db = DB::new(
                     self.name.clone(),
-                    "root".to_string(),
-                    "password".to_string(),
+                    "admin".to_string(),
+                    "64f17b9e-2808-43cd-a9f0-c1569fb40823".to_string(),
                     "mydb".to_string(),
                 );
 

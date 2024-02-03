@@ -1,3 +1,5 @@
+use std::process::Command;
+
 #[derive(Debug, Clone)]
 pub enum DbType {
     MySQL,
@@ -44,12 +46,25 @@ impl DB {
         match self.db_type {
             Some(DbType::MySQL) => {
                 println!("Pulling MySQL image");
-                Err(String::from("Not Implemented"))
+
+                let output = Command::new("docker")
+                    .stdout(std::process::Stdio::inherit())
+                    .arg("pull")
+                    .arg("mysql")
+                    .output()
+                    .expect("failed to execute process");
+
+                if output.status.success() {
+                    return Ok(());
+                } else {
+                    return Err(String::from("Failed to pull image"));
+                }
             }
             Some(DbType::PostgreSQL) => {
                 println!("Pulling PostgreSQL image");
                 // exec docker pull postgres
-                let output = std::process::Command::new("docker")
+                let output = Command::new("docker")
+                    .stdout(std::process::Stdio::inherit())
                     .arg("pull")
                     .arg("postgres")
                     .output()
@@ -63,31 +78,78 @@ impl DB {
             }
             Some(DbType::MongoDB) => {
                 println!("Pulling MongoDB image");
-                Err(String::from("Not Implemented"))
+                let output = Command::new("docker")
+                    .stdout(std::process::Stdio::inherit())
+                    .arg("pull")
+                    .arg("mongo")
+                    .output()
+                    .expect("failed to execute process");
+
+                if output.status.success() {
+                    return Ok(());
+                } else {
+                    return Err(String::from("Failed to pull image"));
+                }
             }
             Some(DbType::Redis) => {
                 println!("Pulling Redis image");
-                Err(String::from("Not Implemented"))
+                let output = Command::new("docker")
+                    .stdout(std::process::Stdio::inherit())
+                    .arg("pull")
+                    .arg("redis")
+                    .output()
+                    .expect("failed to execute process");
+
+                if output.status.success() {
+                    return Ok(());
+                } else {
+                    return Err(String::from("Failed to pull image"));
+                }
             }
             None => todo!(),
         }
     }
 
-    pub fn run_container(&self) -> Result<(), String> {
+    fn run_container(&self) -> Result<(), String> {
         match &self.db_type {
             Some(DbType::MySQL) => {
                 println!("Running MySQL container");
-                Err(String::from("Not Implemented"))
+                let output = Command::new("docker")
+                    .arg("run")
+                    .arg("--name")
+                    .arg(&self.name)
+                    .arg("-e")
+                    .arg(format!("MYSQL_ROOT_PASSWORD={}", &self.password))
+                    .arg("-e")
+                    .arg(format!("MYSQL_DATABASE={}", &self.dbname))
+                    .arg("-e")
+                    .arg(format!("MYSQL_USER={}", &self.username))
+                    .arg("-e")
+                    .arg(format!("MYSQL_PASSWORD={}", &self.password))
+                    .arg("-d")
+                    .arg("mysql")
+                    .output()
+                    .expect("failed to execute process");
+
+                if !output.status.success() {
+                    return Err(String::from("Failed to run container"));
+                } else {
+                    return Ok(());
+                }
             }
             Some(DbType::PostgreSQL) => {
                 println!("Running PostgreSQL container");
                 // exec docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -d postgres
-                let output = std::process::Command::new("docker")
+                let output = Command::new("docker")
                     .arg("run")
                     .arg("--name")
                     .arg(&self.name)
                     .arg("-e")
                     .arg(format!("POSTGRES_PASSWORD={}", &self.password))
+                    .arg("-e")
+                    .arg(format!("POSTGRES_USER={}", &self.username))
+                    .arg("-e")
+                    .arg(format!("POSTGRES_DB={}", &self.dbname))
                     .arg("-d")
                     .arg("postgres")
                     .output()
@@ -101,11 +163,43 @@ impl DB {
             }
             Some(DbType::MongoDB) => {
                 println!("Running MongoDB container");
-                Err(String::from("Not Implemented"))
+                let output = Command::new("docker")
+                    .arg("run")
+                    .arg("--name")
+                    .arg(&self.name)
+                    .arg("-e")
+                    .arg(format!("MONGO_INITDB_ROOT_USERNAME={}", &self.username))
+                    .arg("-e")
+                    .arg(format!("MONGO_INITDB_ROOT_PASSWORD={}", &self.password))
+                    .arg("-e")
+                    .arg(format!("MONGO_INITDB_DATABASE={}", &self.dbname))
+                    .arg("-d")
+                    .arg("mongo")
+                    .output()
+                    .expect("failed to execute process");
+
+                if !output.status.success() {
+                    return Err(String::from("Failed to run container"));
+                } else {
+                    return Ok(());
+                }
             }
             Some(DbType::Redis) => {
                 println!("Running Redis container");
-                Err(String::from("Not Implemented"))
+                let output = Command::new("docker")
+                    .arg("run")
+                    .arg("--name")
+                    .arg(&self.name)
+                    .arg("-d")
+                    .arg("redis")
+                    .output()
+                    .expect("failed to execute process");
+
+                if !output.status.success() {
+                    return Err(String::from("Failed to run container"));
+                } else {
+                    return Ok(());
+                }
             }
             None => Err(String::from("DB Type is not set")),
         }
