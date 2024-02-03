@@ -1,40 +1,9 @@
-struct PostgreSqlEnv {
-    postgres_user: String,
-    postgres_password: String,
-    postgres_db: String,
-    // POSTGRES_INITDB_ARGS
-    // POSTGRES_INITDB_WALDIR
-    // POSTGRES_HOST_AUTH_METHOD
-    // PGDATA
-}
-
-struct MysqlEnv {
-    mysql_user: String,
-    mysql_password: String,
-    mysql_db: String,
-}
-
-struct MongoDbEnv {
-    mongo_initdb_root_username: String,
-    mongo_initdb_root_password: String,
-}
-
-struct RedisEnv {
-    redis_password: String,
-    redis_dbname: String,
-}
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum DbType {
     MySQL,
     PostgreSQL,
     MongoDB,
     Redis,
-}
-struct Env {
-    MySQL: MysqlEnv,
-    PostgreSQL: PostgreSqlEnv,
-    MongoDB: MongoDbEnv,
-    Redis: RedisEnv,
 }
 
 pub struct DB {
@@ -55,8 +24,9 @@ impl DB {
         }
     }
 
-    pub fn set_type(&mut self, db_type: DbType) {
-        self.db_type = Some(db_type);
+    pub fn set_type(&mut self, db_type: &DbType) {
+        let _db_type: DbType = db_type.clone();
+        self.db_type = Some(_db_type);
     }
 
     pub fn create(&self) -> Result<(), String> {
@@ -85,10 +55,11 @@ impl DB {
                     .output()
                     .expect("failed to execute process");
 
-                println!("status: {}", output.status);
-                println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
-                println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
-                Ok(())
+                if output.status.success() {
+                    return Ok(());
+                } else {
+                    return Err(String::from("Failed to pull image"));
+                }
             }
             Some(DbType::MongoDB) => {
                 println!("Pulling MongoDB image");
@@ -121,10 +92,6 @@ impl DB {
                     .arg("postgres")
                     .output()
                     .expect("failed to execute process");
-
-                println!("status: {}", output.status);
-                println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
-                println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
 
                 if !output.status.success() {
                     return Err(String::from("Failed to run container"));
