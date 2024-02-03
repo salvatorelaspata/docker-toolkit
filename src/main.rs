@@ -1,32 +1,19 @@
-use chrono::prelude::*;
-
 mod app;
+mod cli;
 mod container;
 mod db;
 mod install;
 
-use crate::{
-    app::AppRuntime,
-    container::{Container, ContainerType},
-    db::DbType,
-};
+use crate::container::Container;
 
-struct Engine {
-    containers: Vec<Container>,
-}
+struct Engine {}
 
 impl Engine {
     fn new() -> Engine {
-        Engine { containers: vec![] }
+        Engine {}
     }
 
-    fn ps(&self) {
-        for container in &self.containers {
-            println!("{:?}", container.name);
-        }
-    }
-
-    fn docker_ps(&self) {
+    pub fn docker_ps(&self) {
         let output = std::process::Command::new("docker")
             .arg("ps")
             .output()
@@ -37,7 +24,7 @@ impl Engine {
         println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
     }
 
-    fn create_container(&mut self, container: Container) {
+    fn create_container(&self, container: Container) {
         let container = container::Container::new(
             container.name,
             container.description,
@@ -66,21 +53,7 @@ impl Engine {
         //     String::from("container.db_name"),
         // );
         container.create();
-
-        self.containers.push(container);
     }
-}
-
-// macro to create a new container
-macro_rules! create_container {
-    ($name:expr, $description:expr, $version:expr, $container_type:expr) => {
-        Container::new(
-            $name.to_string(),
-            $description.to_string(),
-            $version.to_string(),
-            $container_type,
-        )
-    };
 }
 
 fn main() {
@@ -93,64 +66,8 @@ fn main() {
     let runnig = install::check_if_docker_is_running();
     println!("Docker is running: {:?}", runnig);
 
-    // create name from text + ts
-    let now = Utc::now();
-    let date_as_string = now.format("%Y%m%d%H%M%S").to_string();
+    let engine = Engine::new();
 
-    let mysql = create_container!(
-        format!("{}--{}", String::from("mysql"), date_as_string),
-        // "admin",
-        // "admin",
-        // "mydb",
-        "MySQL Database",
-        "latest",
-        ContainerType::Db { db: DbType::MySQL }
-    );
-
-    let postgres = create_container!(
-        format!("{}--{}", String::from("postgres"), date_as_string),
-        // "admin",
-        // "admin",
-        // "mydb",
-        "Postgres Database",
-        "latest",
-        ContainerType::Db {
-            db: DbType::PostgreSQL
-        }
-    );
-
-    let mongodb = create_container!(
-        format!("{}--{}", String::from("mongodb"), date_as_string),
-        // "admin",
-        // "admin",
-        // "mydb",
-        "MongoDB Database",
-        "latest",
-        ContainerType::Db {
-            db: DbType::MongoDB
-        }
-    );
-
-    let redis = create_container!(
-        format!("{}--{}", String::from("redis"), date_as_string),
-        // "admin",
-        // "admin",
-        // "mydb",
-        "Redis Database",
-        "latest",
-        ContainerType::Db { db: DbType::Redis }
-    );
-
-    // nodejs.create();
-
-    let mut engine = Engine::new();
-    // db
-    engine.create_container(postgres);
-    engine.create_container(mongodb);
-    engine.create_container(redis);
-    engine.create_container(mysql);
-
-    engine.ps();
-
-    engine.docker_ps();
+    let cli = cli::Cli::new(engine);
+    cli.run();
 }
