@@ -66,10 +66,10 @@ fn parse_args(engine: &Engine) -> bool {
     if args.len() == 1 {
         return false;
     } else {
-        println!(
-            "name: {}, type: {}, username: {}, password: {}, dbname: {}",
-            args[2], args[3], args[4], args[5], args[6]
-        );
+        // println!(
+        //     "name: {}, type: {}, username: {}, password: {}, dbname: {}",
+        //     args[2], args[3], args[4], args[5], args[6]
+        // );
         match args[1].as_str() {
             "DB" => {
                 let container = create_db_instance(

@@ -1,4 +1,8 @@
-use std::process::Command;
+use std::{
+    env::current_dir,
+    fs::{create_dir, create_dir_all},
+    process::Command,
+};
 
 #[derive(Debug, Clone)]
 pub enum DbType {
@@ -33,6 +37,7 @@ impl DB {
 
     pub fn create(&self) -> Result<(), String> {
         let pull = self.pull_image();
+        self.create_volume();
         let container = self.run_container();
 
         if pull.is_ok() && container.is_ok() {
@@ -110,6 +115,26 @@ impl DB {
         }
     }
 
+    fn _get_path(&self) -> String {
+        let binding = current_dir().unwrap();
+        let current_str = binding.to_str().unwrap();
+        let volume_name = format!("{}/volumes/{}_volume", current_str, &self.name);
+        volume_name
+    }
+
+    fn create_volume(&self) {
+        let volume_name = self._get_path();
+        let output = create_dir_all(&volume_name);
+        match output {
+            Ok(_) => {
+                println!("Volume created successfully");
+            }
+            Err(e) => {
+                println!("Failed to create volume: {}", e);
+            }
+        }
+    }
+
     fn run_container(&self) -> Result<(), String> {
         match &self.db_type {
             Some(DbType::MySQL) => {
@@ -126,6 +151,8 @@ impl DB {
                     .arg(format!("MYSQL_USER={}", &self.username))
                     .arg("-e")
                     .arg(format!("MYSQL_PASSWORD={}", &self.password))
+                    .arg("--volume")
+                    .arg(format!("{}:/var/lib/mysql", self._get_path()))
                     .arg("-d")
                     .arg("mysql")
                     .output()
@@ -150,6 +177,8 @@ impl DB {
                     .arg(format!("POSTGRES_USER={}", &self.username))
                     .arg("-e")
                     .arg(format!("POSTGRES_DB={}", &self.dbname))
+                    .arg("--volume")
+                    .arg(format!("{}:/var/lib/postgresql/data", self._get_path()))
                     .arg("-d")
                     .arg("postgres")
                     .output()
@@ -173,6 +202,8 @@ impl DB {
                     .arg(format!("MONGO_INITDB_ROOT_PASSWORD={}", &self.password))
                     .arg("-e")
                     .arg(format!("MONGO_INITDB_DATABASE={}", &self.dbname))
+                    .arg("--volume")
+                    .arg(format!("{}:/data/db", self._get_path()))
                     .arg("-d")
                     .arg("mongo")
                     .output()
@@ -190,6 +221,8 @@ impl DB {
                     .arg("run")
                     .arg("--name")
                     .arg(&self.name)
+                    .arg("--volume")
+                    .arg(format!("{}:/data", self._get_path()))
                     .arg("-d")
                     .arg("redis")
                     .output()
