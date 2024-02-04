@@ -29,24 +29,36 @@ cargo run -- DB myredisdb Redis admin "bcf0f144-cf98-4832-8a82-45c3bac6b067" myd
 
 What do you want to do?
 
-- [ ] Create a new container
+- [X] Create a new container
   - What kind of instance do you want to create?
-  - [ ] Db
+  - [X] Db
     - which db do you want to create?
-      - [ ] PostgreSQL
-      - [ ] MySQL
-      - [ ] MongoDB
-      - [ ] Redis
-  - [ ] App
-    - which app runtimee do you want to create?
+      - [X] PostgreSQL
+      - [X] MySQL
+      - [X] MongoDB
+      - [X] Redis
+  - [ ] App (wip)
+    - which app runtime do you want to create?
       - [ ] Node
       - [ ] Python
       - [ ] Java
       - [ ] Rust
+  - [ ] Compose (wip)
+    - which app runtime do you want to create?
+      - [ ] Node
+      - [ ] Python
+      - [ ] Java
+      - [ ] Rust  
+    - witch db do you want to create?
+      - [ ] PostgreSQL
+      - [ ] MySQL
+      - [ ] MongoDB
+      - [ ] Redis
 - [ ] List all containers
 - [ ] Exit
 
-
 ## ToDo
 
-Create Volumes
+App
+
+Compose
