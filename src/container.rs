@@ -8,38 +8,52 @@ pub enum ContainerType {
     App { runtime: AppRuntime },
 }
 
+struct Config {
+    username: String,
+    password: String,
+    dbname: String,
+}
+
 pub struct Container {
     pub name: String,
-    pub description: String,
-    pub version: String,
     pub container_type: ContainerType,
+    // optional configuration environments
+    env: Config,
 }
 impl Container {
-    pub fn new(
-        name: String,
-        description: String,
-        version: String,
-        container_type: ContainerType,
-    ) -> Container {
+    pub fn new(name: String, container_type: ContainerType) -> Container {
         Container {
             name,
-            description,
-            version,
             container_type,
+            env: Config {
+                username: String::from("admin"),
+                password: String::from("64f17b9e-2808-43cd-a9f0-c1569fb40823"),
+                dbname: String::from("mydb"),
+            },
+            // default env
         }
+    }
+
+    pub fn set_env(&mut self, username: String, password: String, dbname: String) {
+        self.env = Config {
+            username,
+            password,
+            dbname,
+        };
     }
 
     pub fn create(&self) {
         let host = String::from("localhost");
         let port = String::from("5432");
+
         match &self.container_type {
             ContainerType::Db { db } => {
                 // create not referenced db
                 let mut _db = DB::new(
                     self.name.clone(),
-                    "admin".to_string(),
-                    "64f17b9e-2808-43cd-a9f0-c1569fb40823".to_string(),
-                    "mydb".to_string(),
+                    self.env.username.clone(),
+                    self.env.password.clone(),
+                    self.env.dbname.clone(),
                 );
 
                 _db.set_type(db);

@@ -4,6 +4,6 @@ pub enum AppRuntime {
     Java,
     Python,
     Rust,
-    Go,
-    Ruby,
+    // Go,
+    // Ruby,
 }

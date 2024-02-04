@@ -1,11 +1,32 @@
-use chrono::prelude::*;
 use inquire::{InquireError, Select, Text};
+use uuid::Uuid;
 
-use crate::{app::AppRuntime, container, db::DbType, Engine};
+use crate::{app::AppRuntime, create_app_instance, create_db_instance, db::DbType, Engine};
 
 pub struct Cli {
     engine: Engine,
 }
+
+pub fn db_type(string: &str) -> DbType {
+    match string {
+        "PostgreSQL" => DbType::PostgreSQL,
+        "MySQL" => DbType::MySQL,
+        "MongoDB" => DbType::MongoDB,
+        "Redis" => DbType::Redis,
+        _ => DbType::PostgreSQL,
+    }
+}
+
+pub fn app_type(string: &str) -> AppRuntime {
+    match string {
+        "Node" => AppRuntime::Node,
+        "Python" => AppRuntime::Python,
+        "Java" => AppRuntime::Java,
+        "Rust" => AppRuntime::Rust,
+        _ => AppRuntime::Node,
+    }
+}
+
 impl Cli {
     pub fn new(engine: Engine) -> Cli {
         Cli { engine }
@@ -67,29 +88,23 @@ impl Cli {
                 let ans: Result<String, InquireError> =
                     Text::new("What's the instance name?").prompt();
 
-                fn db_type(string: &str) -> DbType {
-                    match string {
-                        "PostgreSQL" => DbType::PostgreSQL,
-                        "MySQL" => DbType::MySQL,
-                        "MongoDB" => DbType::MongoDB,
-                        "Redis" => DbType::Redis,
-                        _ => DbType::PostgreSQL,
-                    }
-                }
-
                 match ans {
                     Ok(name) => {
-                        // create name from text + ts
-                        let now = Utc::now();
-                        let date_as_string = now.format("%Y%m%d%H%M%S").to_string();
-                        let container = container::Container::new(
-                            format!("{}--{}", name, date_as_string),
-                            "description".to_string(),
-                            "version".to_string(),
-                            container::ContainerType::Db {
-                                db: db_type(&choice),
-                            },
-                        );
+                        let username: String = Text::new("What's the username?")
+                            .with_default("admin")
+                            .prompt()
+                            .unwrap();
+                        let password: String = Text::new("What's the password?")
+                            .with_default(&Uuid::new_v4().to_string())
+                            .prompt()
+                            .unwrap();
+                        let dbname: String = Text::new("What's the dbname?")
+                            .with_default("mydb")
+                            .prompt()
+                            .unwrap();
+
+                        let container =
+                            create_db_instance(name, db_type(&choice), username, password, dbname);
                         self.engine.create_container(container);
                         self.you_want_to_continue()
                     }
@@ -119,28 +134,9 @@ impl Cli {
                 let ans: Result<String, InquireError> =
                     Text::new("What's the instance name?").prompt();
 
-                fn db_type(string: &str) -> AppRuntime {
-                    match string {
-                        "Node" => AppRuntime::Node,
-                        "Python" => AppRuntime::Python,
-                        "Java" => AppRuntime::Java,
-                        "Rust" => AppRuntime::Rust,
-                        _ => AppRuntime::Node,
-                    }
-                }
-
                 match ans {
                     Ok(name) => {
-                        let now = Utc::now();
-                        let date_as_string = now.format("%Y%m%d%H%M%S").to_string();
-                        let container = container::Container::new(
-                            format!("{}--{}", name, date_as_string),
-                            "description".to_string(),
-                            "version".to_string(),
-                            container::ContainerType::App {
-                                runtime: db_type(&choice),
-                            },
-                        );
+                        let container = create_app_instance(name, app_type(&choice));
                         self.engine.create_container(container);
                         self.you_want_to_continue()
                     }
