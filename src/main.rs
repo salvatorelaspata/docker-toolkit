@@ -3,9 +3,13 @@ mod cli;
 mod container;
 mod db;
 mod engine;
+mod i18n;
 mod install;
+mod questions;
 
 use crate::engine::Engine;
+use crate::questions::{Question, Questions};
+
 fn main() {
     println!("Docker toolkit!");
 

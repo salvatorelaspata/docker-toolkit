@@ -1,13 +1,14 @@
 use inquire::{InquireError, Select, Text};
 
 pub struct Question {
-    question: String,
-    question_type: String,
-    answer: String,
+    pub question: String,
+    pub question_type: String,
+    pub answer: String,
+    pub default: String,
 }
 
 pub struct Questions {
-    questions: Vec<Question>,
+    pub questions: Vec<Question>,
 }
 
 impl Questions {
@@ -23,10 +24,22 @@ impl Questions {
 
     pub fn ask(&self) -> Result<Vec<String>, InquireError> {
         let mut answers: Vec<String> = Vec::new();
+
         for q in &self.questions {
+            // println!("[{}] {}: {}", q.question_type, q.question, q.answer);
             match q.question_type.as_str() {
                 "text" => {
-                    let ans: Result<String, InquireError> = Text::new(&q.question).prompt();
+                    let ans: Result<String, InquireError>;
+                    if q.default == "" {
+                        ans = Text::new(&q.question).prompt();
+                    } else if q.default == "<uuid>" {
+                        ans = Text::new(&q.question)
+                            .with_default(&uuid::Uuid::new_v4().to_string())
+                            .prompt();
+                    } else {
+                        ans = Text::new(&q.question).with_default(&q.default).prompt();
+                    }
+
                     match ans {
                         Ok(answer) => answers.push(answer),
                         Err(_) => println!("There was an error, please try again"),
@@ -41,7 +54,7 @@ impl Questions {
                         Err(_) => println!("There was an error, please try again"),
                     }
                 }
-                _ => println!("There was an error, please try again"),
+                _ => println!("aaaThere was an error, please try again"),
             }
         }
         Ok(answers)

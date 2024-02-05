@@ -1,0 +1,47 @@
+{
+  "functionalities": {
+    "question": "What do you want to do?",
+    "question_type": "select",
+    "answer": "Create a new container,List all containers,Exit"
+  },
+  "container_type": {
+    "question": "What kind of instance do you want to create (DB|App)?",
+    "question_type": "select",
+    "answer": "Db,App"
+  },
+  "container_name": {
+    "question": "Enter the container name",
+    "question_type": "text",
+    "answer": ""
+  },
+  "db_container_type": {
+    "question": "What kind of database do you want to use?",
+    "question_type": "select",
+    "answer": "PostgreSQL,MySQL,MongoDB,Redis"
+  },
+  "db_container_username": {
+    "question": "Enter the database username:",
+    "question_type": "text",
+    "answer": ""
+  },
+  "db_container_password": {
+    "question": "Enter the database password:",
+    "question_type": "text",
+    "answer": ""
+  },
+  "db_container_dbname": {
+    "question": "Enter the database dbname:",
+    "question_type": "text",
+    "answer": ""
+  },
+  "create_app_container": {
+    "question": "What kind of application do you want to use?",
+    "question_type": "select",
+    "answer": "Node.js,Python,Java,Rust"
+  },
+  "yes_no_continue": {
+    "question": "Do you want to continue?",
+    "question_type": "select",
+    "answer": "Yes,No"
+  }
+}
