@@ -1,7 +1,9 @@
 use inquire::{InquireError, Select, Text};
 use uuid::Uuid;
 
-use crate::{app::AppRuntime, create_app_instance, create_db_instance, db::DbType, Engine};
+use crate::{
+    app::AppRuntime, db::DbType, engine::create_app_instance, engine::create_db_instance, Engine,
+};
 
 pub struct Cli {
     engine: Engine,

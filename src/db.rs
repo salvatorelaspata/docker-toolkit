@@ -1,8 +1,4 @@
-use std::{
-    env::current_dir,
-    fs::{create_dir, create_dir_all},
-    process::Command,
-};
+use std::{env::current_dir, fs::create_dir_all, process::Command};
 
 #[derive(Debug, Clone)]
 pub enum DbType {
