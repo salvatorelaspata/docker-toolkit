@@ -43,9 +43,9 @@ impl I18n {
         I18n { language, messages }
     }
 
-    pub fn get_all(&self) -> &HashMap<String, String> {
-        &self.messages
-    }
+    // pub fn get_all(&self) -> &HashMap<String, String> {
+    //     &self.messages
+    // }
 
     pub fn get(&self, key: &str) -> String {
         match self.messages.get(key) {

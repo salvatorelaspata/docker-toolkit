@@ -8,7 +8,6 @@ mod install;
 mod questions;
 
 use crate::engine::Engine;
-use crate::questions::{Question, Questions};
 
 fn main() {
     println!("Docker toolkit!");

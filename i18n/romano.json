@@ -1,0 +1,47 @@
+{
+  "functionalities": {
+    "question": "Che vuoi da fa?",
+    "question_type": "select",
+    "answer": "Deje de container,Famme Vede,Bella"
+  },
+  "container_type": {
+    "question": "Se vabbè.. Che te piace fa (DB|App)?",
+    "question_type": "select",
+    "answer": "Db,App"
+  },
+  "container_name": {
+    "question": "Come lo vuoi chiama?",
+    "question_type": "text",
+    "answer": ""
+  },
+  "db_container_type": {
+    "question": "Mo.. domande forti.. Come lo vuoi?",
+    "question_type": "select",
+    "answer": "PostgreSQL,MySQL,MongoDB,Redis"
+  },
+  "db_container_username": {
+    "question": "Namo de username:",
+    "question_type": "text",
+    "answer": ""
+  },
+  "db_container_password": {
+    "question": "Namo de password:",
+    "question_type": "text",
+    "answer": ""
+  },
+  "db_container_dbname": {
+    "question": "Namo de dbname:",
+    "question_type": "text",
+    "answer": ""
+  },
+  "create_app_container": {
+    "question": "Come te senti oggi?",
+    "question_type": "select",
+    "answer": "Node.js,Python,Java,Rust"
+  },
+  "yes_no_continue": {
+    "question": "Vuoi continuà?",
+    "question_type": "select",
+    "answer": "Si,Bella"
+  }
+}

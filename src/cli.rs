@@ -2,11 +2,9 @@ use crate::{
     app::AppRuntime,
     db::DbType,
     engine::{create_app_instance, create_db_instance, Engine},
-    i18n, questions,
+    i18n::{self, I18n},
+    questions,
 };
-use inquire::{InquireError, Select, Text};
-// use rnglib::{Language, RNG};
-use uuid::Uuid;
 
 pub struct Cli {
     engine: Engine,
@@ -41,7 +39,7 @@ impl Cli {
         // self.list_functionalities();
         let mut questions = questions::Questions::new();
 
-        let language = "it".to_string();
+        let language = "romano".to_string();
         let i18n = i18n::I18n::new(language);
 
         let funtionalities_answer = i18n.get("functionalities.answer");
@@ -113,7 +111,7 @@ impl Cli {
                     answers_db[3].to_string(),
                 );
                 self.engine.create_container(container);
-                self.you_want_to_continue()
+                self.you_want_to_continue(i18n)
             } else if db_app_answer == db_app[1] {
                 let mut questions_app = questions::Questions::new();
 
@@ -131,139 +129,33 @@ impl Cli {
                 );
                 // block stdin during the container creation
                 self.engine.create_container(container);
-                self.you_want_to_continue()
+                self.you_want_to_continue(i18n)
             }
         } else if answers[0] == funtionalities_answer[1] {
-            self.list_containers();
+            self.list_containers(i18n);
         } else {
             println!("Goodbye!");
         }
     }
-    // 1. List of functionalities
-    fn list_functionalities(&self) {
-        let choise: Vec<&str> = vec!["Create a new container", "List all containers", "Exit"];
-
-        let ans: Result<&str, InquireError> =
-            Select::new("What do you want to do?", choise).prompt();
-
-        match ans {
-            Ok(choice) => match choice {
-                "Create a new container" => self.create_container(),
-                "List all containers" => self.list_containers(),
-                "Exit" => println!("Goodbye!"),
-                _ => println!("Invalid choice"),
-            },
-            Err(_) => println!("There was an error, please try again"),
-        }
-    }
-    // 2.1 Create a new container
-    fn create_container(&self) {
-        println!("Creating a new container");
-        let options: Vec<&str> = vec!["DB", "App"];
-
-        let ans: Result<&str, InquireError> =
-            Select::new("What kind of instance do you want to create?", options).prompt();
-
-        match ans {
-            Ok(choice) => match choice {
-                "DB" => self.create_db_container(),
-                "App" => self.create_app_container(),
-                _ => println!("Invalid choice"),
-            },
-            Err(_) => println!("There was an error, please try again"),
-        }
-    }
     // 2.2 List all containers
-    fn list_containers(&self) {
+    fn list_containers(&self, i18n: I18n) {
         println!("Listing all containers");
         self.engine.docker_ps();
-        self.you_want_to_continue()
+        self.you_want_to_continue(i18n)
     }
-    // 3.1 Create a new db container
-    fn create_db_container(&self) {
-        let options: Vec<&str> = vec!["PostgreSQL", "MySQL", "MongoDB", "Redis"];
-
-        let ans: Result<&str, InquireError> =
-            Select::new("which db do you want to create?", options).prompt();
-
-        match ans {
-            Ok(choice) => {
-                println!("{}! That's mine too!", choice);
-                let ans: Result<String, InquireError> =
-                    Text::new("What's the instance name?").prompt();
-
-                match ans {
-                    Ok(name) => {
-                        let username: String = Text::new("What's the username?")
-                            .with_default("admin")
-                            .prompt()
-                            .unwrap();
-                        let password: String = Text::new("What's the password?")
-                            .with_default(&Uuid::new_v4().to_string())
-                            .prompt()
-                            .unwrap();
-                        let dbname: String = Text::new("What's the dbname?")
-                            .with_default("mydb")
-                            .prompt()
-                            .unwrap();
-
-                        let container =
-                            create_db_instance(name, db_type(&choice), username, password, dbname);
-                        self.engine.create_container(container);
-                        self.you_want_to_continue()
-                    }
-                    Err(_) => println!("There was an error, please try again"),
-                }
-            } // CREATE CONTAINER
-            Err(_) => println!("There was an error, please try again"),
-        }
-    }
-    // 3.2 Create an app container
-    fn create_app_container(&self) {
-        let options: Vec<&str> = vec!["Node", "Python", "Java", "Rust"];
-
-        let ans: Result<&str, InquireError> =
-            Select::new("which app runtimee do you want to create?", options).prompt();
-
-        match ans {
-            Ok(choice) => println!("{}! That's mine too!", choice),
-            Err(_) => println!("There was an error, please try again"),
-        }
-
-        let ans: Result<String, InquireError> = Text::new("What's the instance name?").prompt();
-
-        match ans {
-            Ok(choice) => {
-                println!("{}! That's mine too!", choice);
-                let ans: Result<String, InquireError> =
-                    Text::new("What's the instance name?").prompt();
-
-                match ans {
-                    Ok(name) => {
-                        let container = create_app_instance(name, app_type(&choice));
-                        self.engine.create_container(container);
-                        self.you_want_to_continue()
-                    }
-                    Err(_) => println!("There was an error, please try again"),
-                }
-            } // CREATE CONTAINER
-            Err(_) => println!("There was an error, please try again"),
-        }
-    }
-
-    fn you_want_to_continue(&self) {
-        let choise: Vec<&str> = vec!["Yes", "No"];
-
-        let ans: Result<&str, InquireError> =
-            Select::new("Do you want to continue?", choise).prompt();
-
-        match ans {
-            Ok(choice) => match choice {
-                "Yes" => self.run(),
-                "No" => println!("Goodbye!"),
-                _ => println!("Invalid choice"),
-            },
-            Err(_) => println!("There was an error, please try again"),
+    fn you_want_to_continue(&self, i18n: I18n) {
+        let mut _questions = questions::Questions::new();
+        _questions.add(questions::Question {
+            question: i18n.get("yes_no_continue.question"),
+            question_type: i18n.get("yes_no_continue.question_type"),
+            answer: i18n.get("yes_no_continue.answer"),
+            default: String::from(""),
+        });
+        let answers = _questions.ask().unwrap();
+        if answers[0] == "yes" {
+            self.run();
+        } else {
+            println!("Goodbye!");
         }
     }
 }
