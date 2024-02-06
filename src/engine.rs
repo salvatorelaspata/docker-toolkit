@@ -73,7 +73,7 @@ impl Engine {
     }
 }
 
-fn compose_name_instance(name: &str) -> String {
+pub fn compose_name_instance(name: &str) -> String {
     let now = Utc::now();
     format!("{}--{}", name, now.format("%Y%m%d%H%M%S").to_string())
 }

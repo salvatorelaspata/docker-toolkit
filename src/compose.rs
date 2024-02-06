@@ -1,4 +1,4 @@
-use std::env::current_dir;
+use std::{env::current_dir, io::Write};
 
 pub struct Service {
     pub name: String,
@@ -44,17 +44,25 @@ impl Compose {
     pub fn add_volume(&mut self, volume: Volume) {
         self.volumes.push(volume);
     }
-    fn _get_path(&self) -> String {
-        let binding = current_dir().unwrap();
-        let current_str = binding.to_str().unwrap();
-        let volume_name = format!("{}/dockercompose/{}.yml", current_str, &self.name);
-        volume_name
-    }
 
     pub fn create(&self) {
-        let path = self._get_path();
+        // create a folder with the name of the compose
+        let binding = current_dir().unwrap();
+        let current_str = binding.to_str().unwrap();
+        let path = format!("{}/dockercompose/{}", current_str, self.name);
+        std::fs::create_dir_all(path.clone()).unwrap();
+
+        // create a file with the name of the compose
+        let file_path = format!("{}/docker-compose.yml", path);
         let content = self.to_string();
-        std::fs::write(path, content).unwrap();
+        let mut file = std::fs::File::create(file_path).unwrap();
+        file.write_all(content.as_bytes()).unwrap();
+
+        // create folder for each service
+        for service in &self.services {
+            let service_path = format!("{}/{}", path, service.name);
+            std::fs::create_dir_all(service_path).unwrap();
+        }
     }
 
     pub fn to_string(&self) -> String {
