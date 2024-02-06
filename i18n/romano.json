@@ -1,16 +1,16 @@
 {
   "functionalities": {
-    "question": "Che vuoi da fa?",
+    "question": "Che devi da fa?",
     "question_type": "select",
     "answer": "Deje de container,Famme Vede,Bella"
   },
   "container_type": {
     "question": "Se vabbè.. Che te piace fa (DB|App)?",
     "question_type": "select",
-    "answer": "Db,App"
+    "answer": "DB,APP,COMPOSE"
   },
   "container_name": {
-    "question": "Come lo vuoi chiama?",
+    "question": "Come lo devo da chiama?",
     "question_type": "text",
     "answer": ""
   },
@@ -42,6 +42,6 @@
   "yes_no_continue": {
     "question": "Vuoi continuà?",
     "question_type": "select",
-    "answer": "Si,Bella"
+    "answer": "Avoja,Bella pe te"
   }
 }

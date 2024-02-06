@@ -1,55 +1,122 @@
-// create a new docker-compose.yml file
+use std::env::current_dir;
 
-use std::fs::File;
-use std::io::Write;
-use std::path::Path;
+pub struct Service {
+    pub name: String,
+    pub image: String,
+    pub ports: Vec<String>,
+    pub networks: Vec<String>,
+    pub volumes: Vec<String>,
+}
 
-fn _write_line(file: &mut File, line: &str) {
-    match file.write_all(line.as_bytes()) {
-        Err(why) => {
-            panic!("couldn't write to file: {}", why)
+pub struct Network {
+    pub name: String,
+}
+
+pub struct Volume {
+    pub name: String,
+}
+
+pub struct Compose {
+    pub name: String,
+    pub services: Vec<Service>,
+    pub networks: Vec<Network>,
+    pub volumes: Vec<Volume>,
+}
+
+impl Compose {
+    pub fn new() -> Compose {
+        Compose {
+            name: "docker-compose".to_string(),
+            services: Vec::new(),
+            networks: Vec::new(),
+            volumes: Vec::new(),
         }
-        Ok(_) => println!("successfully wrote to file"),
+    }
+
+    pub fn add_service(&mut self, service: Service) {
+        self.services.push(service);
+    }
+
+    pub fn add_network(&mut self, network: Network) {
+        self.networks.push(network);
+    }
+
+    pub fn add_volume(&mut self, volume: Volume) {
+        self.volumes.push(volume);
+    }
+    fn _get_path(&self) -> String {
+        let binding = current_dir().unwrap();
+        let current_str = binding.to_str().unwrap();
+        let volume_name = format!(
+            "{}/dockerfiles/dockercompose/{}.yml",
+            current_str, &self.name
+        );
+        volume_name
+    }
+
+    pub fn create(&self) {
+        let path = self._get_path();
+        let content = self.to_string();
+        std::fs::write(path, content).unwrap();
+    }
+
+    pub fn to_string(&self) -> String {
+        println!("Compose to_string");
+        let mut result = String::new();
+        result.push_str("version: '3'\n");
+
+        result.push_str("services:\n");
+        for service in &self.services {
+            result.push_str(&service.to_string());
+        }
+
+        result.push_str("networks:\n");
+        for network in &self.networks {
+            result.push_str(&network.to_string());
+        }
+        result.push_str("volumes:\n");
+        for volume in &self.volumes {
+            result.push_str(&volume.to_string());
+        }
+        result
     }
 }
 
-fn create_compose_file() {
-    let path = Path::new("docker-compose.yml");
-    let display = path.display();
-
-    let mut file = match File::create(&path) {
-        Err(why) => panic!("couldn't create {}: {}", display, why),
-        Ok(file) => file,
-    };
-
-    _write_line(&mut file, "version: '3'\n");
-    _write_line(&mut file, "services:\n");
+impl Service {
+    pub fn to_string(&self) -> String {
+        let mut result = String::new();
+        result.push_str(&format!("  {}:\n", self.name));
+        result.push_str(&format!("    image: {}\n", self.image));
+        if !self.ports.is_empty() {
+            result.push_str("    ports:\n");
+            for port in &self.ports {
+                result.push_str(&format!("      - {}\n", port));
+            }
+        }
+        if !self.networks.is_empty() {
+            result.push_str("    networks:\n");
+            for network in &self.networks {
+                result.push_str(&format!("      - {}\n", network));
+            }
+        }
+        if !self.volumes.is_empty() {
+            result.push_str("    volumes:\n");
+            for volume in &self.volumes {
+                result.push_str(&format!("      - {}\n", volume));
+            }
+        }
+        result
+    }
 }
 
-fn create_service(service_name: &str, image: &str, ports: &str, volumes: &str) {
-    let path = Path::new("docker-compose.yml");
-    let display = path.display();
-
-    let mut file = match File::open(&path) {
-        Err(why) => panic!("couldn't open {}: {}", display, why),
-        Ok(file) => file,
-    };
-
-    _write_line(&mut file, &format!("  {}:\n", service_name));
-    _write_line(&mut file, &format!("    image: {}\n", image));
-    _write_line(&mut file, "    ports:\n");
-    _write_line(&mut file, &format!("      - \"{}:8080\"\n", ports));
-    _write_line(&mut file, "    volumes:\n");
-    _write_line(&mut file, &format!("      - {}:/app\n", volumes));
-    // _write_line(&mut file, "    environment:\n");
-    // _write_line(&mut file, "      - DEBUG=1\n");
-    // _write_line(&mut file, "    depends_on:\n");
-    // _write_line(&mut file, "      - db\n");
-    _write_line(&mut file, "\n");
+impl Network {
+    pub fn to_string(&self) -> String {
+        format!("  {}:\n", self.name)
+    }
 }
 
-fn main() {
-    create_compose_file();
-    create_service("web");
-    create_service("db");
+impl Volume {
+    pub fn to_string(&self) -> String {
+        format!("  {}:\n", self.name)
+    }
 }

@@ -7,7 +7,7 @@
   "container_type": {
     "question": "What kind of instance do you want to create (DB|App)?",
     "question_type": "select",
-    "answer": "Db,App"
+    "answer": "DB,APP,COMPOSE"
   },
   "container_name": {
     "question": "Enter the container name",

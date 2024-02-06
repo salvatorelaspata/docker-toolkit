@@ -1,7 +1,7 @@
 use crate::{
     app::AppRuntime,
     db::DbType,
-    engine::{create_app_instance, create_db_instance, Engine},
+    engine::{create_app_instance, create_db_instance, create_sample_compose_instance, Engine},
     i18n::{self, I18n},
     questions,
 };
@@ -73,8 +73,10 @@ impl Cli {
             let db_app = i18n.get("container_type.answer");
             let db_app: Vec<&str> = db_app.split(",").collect();
             let db_app_answer = answers_container[1].to_string();
-
-            if db_app_answer == db_app[0] {
+            let _db = db_app[0];
+            let _app = db_app[1];
+            let _compose = db_app[2];
+            if db_app_answer == _db {
                 let mut questions_db = questions::Questions::new();
                 questions_db.add(questions::Question {
                     question: i18n.get("db_container_type.question"),
@@ -112,7 +114,7 @@ impl Cli {
                 );
                 self.engine.create_container(container);
                 self.you_want_to_continue(i18n)
-            } else if db_app_answer == db_app[1] {
+            } else if db_app_answer == _app {
                 let mut questions_app = questions::Questions::new();
 
                 questions_app.add(questions::Question {
@@ -130,6 +132,12 @@ impl Cli {
                 // block stdin during the container creation
                 self.engine.create_container(container);
                 self.you_want_to_continue(i18n)
+            } else if db_app_answer == _compose {
+                // TODO - questions for compose to be added here
+                let compose = create_sample_compose_instance();
+
+                self.engine.create_compose_instance(compose);
+                self.you_want_to_continue(i18n)
             }
         } else if answers[0] == funtionalities_answer[1] {
             self.list_containers(i18n);
@@ -144,6 +152,8 @@ impl Cli {
         self.you_want_to_continue(i18n)
     }
     fn you_want_to_continue(&self, i18n: I18n) {
+        let yes_no = i18n.get("yes_no_continue.answer");
+        let yes_no: Vec<&str> = yes_no.split(",").collect();
         let mut _questions = questions::Questions::new();
         _questions.add(questions::Question {
             question: i18n.get("yes_no_continue.question"),
@@ -152,7 +162,7 @@ impl Cli {
             default: String::from(""),
         });
         let answers = _questions.ask().unwrap();
-        if answers[0] == "yes" {
+        if answers[0] == yes_no[0] {
             self.run();
         } else {
             println!("Goodbye!");
