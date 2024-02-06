@@ -24,9 +24,9 @@ pub struct Compose {
 }
 
 impl Compose {
-    pub fn new() -> Compose {
+    pub fn new(name: String) -> Compose {
         Compose {
-            name: "docker-compose".to_string(),
+            name,
             services: Vec::new(),
             networks: Vec::new(),
             volumes: Vec::new(),
@@ -47,10 +47,7 @@ impl Compose {
     fn _get_path(&self) -> String {
         let binding = current_dir().unwrap();
         let current_str = binding.to_str().unwrap();
-        let volume_name = format!(
-            "{}/dockerfiles/dockercompose/{}.yml",
-            current_str, &self.name
-        );
+        let volume_name = format!("{}/dockercompose/{}.yml", current_str, &self.name);
         volume_name
     }
 

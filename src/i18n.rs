@@ -13,6 +13,7 @@ impl I18n {
         let binding = current_dir().unwrap();
         let current_str = binding.to_str().unwrap();
         let path = format!("{}/i18n/{}.json", current_str, language);
+        println!("path: {}", path);
         let file = File::open(path).unwrap();
         let reader = BufReader::new(file);
         let data: Value = serde_json::from_reader(reader).unwrap();

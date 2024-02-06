@@ -51,7 +51,7 @@ impl Engine {
                     return true;
                 }
                 "COMPOSE" => {
-                    let compose = create_sample_compose_instance();
+                    let compose = create_sample_compose_instance("sample".to_string());
                     self.create_compose_instance(compose);
                     return true;
                 }
@@ -69,6 +69,7 @@ impl Engine {
 
     pub fn create_compose_instance(&self, compose: Compose) {
         println!("{}", compose.to_string());
+        compose.create();
     }
 }
 
@@ -77,9 +78,9 @@ fn compose_name_instance(name: &str) -> String {
     format!("{}--{}", name, now.format("%Y%m%d%H%M%S").to_string())
 }
 
-pub fn create_sample_compose_instance() -> Compose {
+pub fn create_sample_compose_instance(name: String) -> Compose {
     // create a simple docker-compose file with a web service and a db service
-    let mut compose = Compose::new();
+    let mut compose = Compose::new(compose_name_instance(&name));
 
     let nginx_service = Service {
         name: "web".to_string(),
