@@ -3,6 +3,7 @@ mod cli;
 mod compose;
 mod container;
 mod db;
+mod dockerfile;
 mod engine;
 mod i18n;
 mod install;

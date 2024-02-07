@@ -101,6 +101,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "inquire",
+ "rand",
  "serde_json",
  "uuid",
 ]

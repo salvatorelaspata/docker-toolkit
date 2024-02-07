@@ -36,6 +36,19 @@ impl Questions {
                         ans = Text::new(&q.question)
                             .with_default(&uuid::Uuid::new_v4().to_string())
                             .prompt();
+                    } else if q.default == "<name>" {
+                        // read simple-name.txt file as vector of string
+                        let simple_name = std::fs::read_to_string("simple-name.txt").unwrap();
+                        // split the string by new line
+                        let simple_name: Vec<&str> = simple_name.split("\n").collect();
+                        // get random index from the vector
+                        let index = rand::random::<usize>() % simple_name.len();
+                        // get the value from the vector
+                        let rand_string = simple_name[index].trim();
+
+                        ans = Text::new(&q.question)
+                            .with_default(&rand_string.to_string())
+                            .prompt();
                     } else {
                         ans = Text::new(&q.question).with_default(&q.default).prompt();
                     }

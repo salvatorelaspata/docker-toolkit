@@ -1,7 +1,7 @@
 use crate::{
     app,
     cli::{app_type, db_type},
-    compose::{Compose, Network, Service, Volume},
+    compose::{Compose, Network, Service, ServiceType, Volume},
     container::{self, Container},
     db,
 };
@@ -68,7 +68,6 @@ impl Engine {
     }
 
     pub fn create_compose_instance(&self, compose: Compose) {
-        println!("{}", compose.to_string());
         compose.create();
     }
 }
@@ -83,6 +82,7 @@ pub fn create_sample_compose_instance(name: String) -> Compose {
     let mut compose = Compose::new(compose_name_instance(&name));
 
     let nginx_service = Service {
+        service_type: ServiceType::APP,
         name: "web".to_string(),
         image: "nginx".to_string(),
         ports: vec!["80:80".to_string()],
@@ -92,6 +92,7 @@ pub fn create_sample_compose_instance(name: String) -> Compose {
     compose.add_service(nginx_service);
 
     let db_service = Service {
+        service_type: ServiceType::DB,
         name: "db".to_string(),
         image: "postgres".to_string(),
         ports: vec!["5432:5432".to_string()],

@@ -1,6 +1,12 @@
 use std::{env::current_dir, io::Write};
 
+use crate::dockerfile::create_simple_dockerfile;
+pub enum ServiceType {
+    DB,
+    APP,
+}
 pub struct Service {
+    pub service_type: ServiceType,
     pub name: String,
     pub image: String,
     pub ports: Vec<String>,
@@ -61,7 +67,19 @@ impl Compose {
         // create folder for each service
         for service in &self.services {
             let service_path = format!("{}/{}", path, service.name);
+            let dockerfile_path = format!("{}/Dockerfile", service_path);
             std::fs::create_dir_all(service_path).unwrap();
+            // create dockerfile if service is an app
+            match service.service_type {
+                ServiceType::APP => {
+                    let dockerfile_content = create_simple_dockerfile().to_string();
+                    let mut dockerfile_file = std::fs::File::create(dockerfile_path).unwrap();
+                    dockerfile_file
+                        .write_all(dockerfile_content.as_bytes())
+                        .unwrap();
+                }
+                _ => {}
+            }
         }
     }
 

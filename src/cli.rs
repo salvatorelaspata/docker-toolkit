@@ -55,12 +55,11 @@ impl Cli {
         let answers = questions.ask().unwrap();
         if answers[0] == funtionalities_answer[0] {
             let mut questions_container = questions::Questions::new();
-            // let rng = RNG::try_from(&Language::Roman).unwrap();
             questions_container.add(questions::Question {
                 question: i18n.get("container_name.question"),
                 question_type: i18n.get("container_name.question_type"),
                 answer: i18n.get("container_name.answer"),
-                default: String::from(""), //rng.generate_name()
+                default: String::from("<name>"),
             });
             questions_container.add(questions::Question {
                 question: i18n.get("container_type.question"),
