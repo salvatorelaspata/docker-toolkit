@@ -3,7 +3,7 @@ use crate::{
     cli::{app_type, db_type},
     compose::{Compose, Network, Service, ServiceType, Volume},
     container::{self, Container},
-    db,
+    db, i18n,
 };
 use chrono::Utc;
 use std::env;
@@ -31,35 +31,35 @@ impl Engine {
         if args.len() == 1 {
             return false;
         } else {
-            // let db_app = i18n::I18n::new("romano".to_string()).get("container_type.answer");
-            match args[1].as_str() {
-                "DB" => {
-                    let container = create_db_instance(
-                        args[2].to_string(),
-                        db_type(&args[3]),
-                        args[4].to_string(),
-                        args[5].to_string(),
-                        args[6].to_string(),
-                    );
+            let db_app = i18n::I18n::new("romano".to_string()).get("container_type.answer");
+            let db_app: Vec<&str> = db_app.split(",").collect();
 
-                    self.create_container(container);
-                    return true;
-                }
-                "APP" => {
-                    let container = create_app_instance(args[2].to_string(), app_type(&args[3]));
-                    self.create_container(container);
-                    return true;
-                }
-                "COMPOSE" => {
-                    let compose = create_sample_compose_instance("sample".to_string());
-                    self.create_compose_instance(compose);
-                    return true;
-                }
-                _ => {
-                    println!("Invalid choice");
-                    return false;
-                }
+            let _db = db_app[0];
+            let _app = db_app[1];
+            let _compose = db_app[2];
+            if args[1].as_str() == _db {
+                let container = create_db_instance(
+                    args[2].to_string(),
+                    db_type(&args[3]),
+                    args[4].to_string(),
+                    args[5].to_string(),
+                    args[6].to_string(),
+                );
+
+                self.create_container(container);
+                return true;
+            } else if args[1].as_str() == _app {
+                let container = create_app_instance(args[2].to_string(), app_type(&args[3]));
+                self.create_container(container);
+                return true;
+            } else if args[1].as_str() == _compose {
+                let compose = create_sample_compose_instance("sample".to_string());
+                self.create_compose_instance(compose);
+                return true;
             }
+
+            println!("Invalid choice");
+            return false;
         }
     }
 
