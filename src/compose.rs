@@ -1,9 +1,12 @@
 use std::{env::current_dir, io::Write};
 
-use crate::dockerfile::create_simple_dockerfile;
+use crate::dockerfile::create_node_dockerfile;
 pub enum ServiceType {
     DB,
-    APP,
+    APP, // {
+         //     runtime: AppRuntime,
+         //     with_nginx: bool,
+         // },
 }
 pub struct Service {
     pub service_type: ServiceType,
@@ -58,7 +61,7 @@ impl Compose {
         let path = format!("{}/dockercompose/{}", current_str, self.name);
         std::fs::create_dir_all(path.clone()).unwrap();
 
-        // create a file with the name of the compose
+        // create a folder for the compose
         let file_path = format!("{}/docker-compose.yml", path);
         let content = self.to_string();
         let mut file = std::fs::File::create(file_path).unwrap();
@@ -69,17 +72,19 @@ impl Compose {
             let service_path = format!("{}/{}", path, service.name);
             let dockerfile_path = format!("{}/Dockerfile", service_path);
             std::fs::create_dir_all(service_path).unwrap();
+            let mut dockerfile_content;
             // create dockerfile if service is an app
             match service.service_type {
                 ServiceType::APP => {
-                    let dockerfile_content = create_simple_dockerfile().to_string();
-                    let mut dockerfile_file = std::fs::File::create(dockerfile_path).unwrap();
-                    dockerfile_file
-                        .write_all(dockerfile_content.as_bytes())
-                        .unwrap();
+                    dockerfile_content = create_node_dockerfile(with_nginx).to_string();
                 }
                 _ => {}
             }
+
+            let mut dockerfile_file = std::fs::File::create(dockerfile_path).unwrap();
+            dockerfile_file
+                .write_all(dockerfile_content.as_bytes())
+                .unwrap();
         }
     }
 

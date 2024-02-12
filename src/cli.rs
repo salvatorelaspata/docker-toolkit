@@ -132,9 +132,8 @@ impl Cli {
                 self.engine.create_container(container);
                 self.you_want_to_continue(i18n)
             } else if db_app_answer == _compose {
-                // TODO - questions for compose to be added here
-                let compose = create_sample_compose_instance(answers_container[0].to_string());
-
+                // create a compose from the answers
+                let compose = create_sample_compose_instance();
                 self.engine.create_compose_instance(compose);
                 self.you_want_to_continue(i18n)
             }

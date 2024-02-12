@@ -33,33 +33,8 @@ impl Dockerfile {
     }
 }
 
-pub fn create_node_dockerfile() -> Dockerfile {
-    let mut dockerfile = Dockerfile::new();
-    // node
-    dockerfile.add_instruction(
-        String::from("FROM"),
-        vec![
-            "node:lts".to_string(),
-            "AS".to_string(),
-            "build".to_string(),
-        ],
-    );
-    dockerfile.add_instruction(String::from("WORKDIR"), vec!["/app".to_string()]);
-    dockerfile.add_instruction(
-        String::from("COPY"),
-        vec!["package*.json".to_string(), "./".to_string()],
-    );
-    dockerfile.add_instruction(
-        String::from("RUN"),
-        vec!["npm".to_string(), "install".to_string()],
-    );
-    dockerfile.add_instruction(String::from("COPY"), vec![".".to_string(), ".".to_string()]);
-    dockerfile.add_instruction(
-        String::from("RUN"),
-        vec!["npm".to_string(), "run".to_string(), "build".to_string()],
-    );
-    // nginx
-    dockerfile.add_instruction(
+fn create_nginx_instruction(docker_file: &Dockerfile) {
+    docker_file.add_instruction(
         String::from("FROM"),
         vec![
             "nginx:alpine".to_string(),
@@ -67,14 +42,14 @@ pub fn create_node_dockerfile() -> Dockerfile {
             "runtime".to_string(),
         ],
     );
-    dockerfile.add_instruction(
+    docker_file.add_instruction(
         String::from("COPY"),
         vec![
             "./nginx/nginx.conf".to_string(),
             "/etc/nginx/nginx.conf".to_string(),
         ],
     );
-    dockerfile.add_instruction(
+    docker_file.add_instruction(
         String::from("COPY"),
         vec![
             "--from=build".to_string(),
@@ -82,8 +57,41 @@ pub fn create_node_dockerfile() -> Dockerfile {
             "/usr/share/nginx/html".to_string(),
         ],
     );
-    dockerfile.add_instruction(String::from("EXPOSE"), vec!["4321".to_string()]);
-    dockerfile
+    docker_file.add_instruction(String::from("EXPOSE"), vec!["4321".to_string()]);
+}
+
+fn create_node_instruction(docker_file: &Dockerfile) {
+    docker_file.add_instruction(
+        String::from("FROM"),
+        vec![
+            "node:lts".to_string(),
+            "AS".to_string(),
+            "build".to_string(),
+        ],
+    );
+    docker_file.add_instruction(String::from("WORKDIR"), vec!["/app".to_string()]);
+    docker_file.add_instruction(
+        String::from("COPY"),
+        vec!["package*.json".to_string(), "./".to_string()],
+    );
+    docker_file.add_instruction(
+        String::from("RUN"),
+        vec!["npm".to_string(), "install".to_string()],
+    );
+    docker_file.add_instruction(String::from("COPY"), vec![".".to_string(), ".".to_string()]);
+    docker_file.add_instruction(
+        String::from("RUN"),
+        vec!["npm".to_string(), "run".to_string(), "build".to_string()],
+    );
+}
+
+pub fn create_node_dockerfile() -> Dockerfile {
+    let mut docker_file = Dockerfile::new();
+
+    create_node_instruction(&docker_file);
+    create_nginx_instruction(&docker_file);
+
+    docker_file
 }
 
 pub fn create_simple_dockerfile() -> Dockerfile {
