@@ -1,0 +1,118 @@
+Docker toolkit!
+Docker is installed
+Docker still running
+> Che devi da fa? Deje de container
+> Come lo devo da chiama? bright
+> Se vabbè.. Che te piace fa (DB|App)? DB
+> Mo.. domande forti.. Come lo vuoi? PostgreSQL
+> Namo de username: admin
+> Namo de password: 7ba8e7c8-3bdf-44ce-a859-057a3d08a652
+> Namo de dbname: mydb
+Pulling PostgreSQL image
+Using default tag: latest
+latest: Pulling from library/postgres
+f546e941f15b: Pulling fs layer 
+926c64b890ad: Pulling fs layer 
+eca757527cc4: Pulling fs layer 
+cffbe79d4ccf: Pulling fs layer 
+948961f25f1c: Pulling fs layer 
+de342bb98309: Pulling fs layer 
+3793b15c294c: Pull complete 
+75dcc1faad83: Pull complete 
+229f0e61e152: Pull complete 
+456b431d9540: Pull complete 
+32a2a88964c4: Pull complete 
+71d0c2410892: Pull complete 
+fc3309c742f3: Pull complete 
+620e97d3afbc: Pull complete 
+Digest: sha256:1bd17d36d605b63fd62f03800a932bae292250659ffc417cf8c29836cc353b5f
+Status: Downloaded newer image for postgres:latest
+docker.io/library/postgres:latest
+Volume created successfully
+Running PostgreSQL container
+Container bright--20240221161731 created successfully
+Connection String: "postgresql://admin:7ba8e7c8-3bdf-44ce-a859-057a3d08a652@localhost:5432/mydb"
+Connection String: Ok(())
+> Vuoi continuà? Avoja
+> Che devi da fa? Deje de container
+> Come lo devo da chiama? union
+> Se vabbè.. Che te piace fa (DB|App)? DB
+> Mo.. domande forti.. Come lo vuoi? MySQL
+> Namo de username: admin
+> Namo de password: c34b1eac-1e12-4ae3-ac68-f34d0e465090
+> Namo de dbname: mydb
+Pulling MySQL image
+Using default tag: latest
+latest: Pulling from library/mysql
+ea4e27ae0b4c: Pulling fs layer 
+837904302482: Pulling fs layer 
+3c574b61b241: Pull complete 
+654fc4f3eb2d: Pull complete 
+32da9c2187e3: Pull complete 
+dc99c3c88bd6: Pull complete 
+970181cc0aa6: Pull complete 
+d77b716c39d5: Pull complete 
+9e650d7f9f83: Pull complete 
+acc21ff36b4b: Pull complete 
+Digest: sha256:ff5ab9cdce0b4c59704b4e2a09deed5ab8467be795e0ea20228b8528f53fcf82
+Status: Downloaded newer image for mysql:latest
+docker.io/library/mysql:latest
+Volume created successfully
+Running MySQL container
+Container union--20240221161816 created successfully
+Connection String: "mysql://admin:c34b1eac-1e12-4ae3-ac68-f34d0e465090@localhost:5432/mydb"
+Connection String: Ok(())
+> Vuoi continuà? Avoja
+> Che devi da fa? Deje de container
+> Come lo devo da chiama? ask
+> Se vabbè.. Che te piace fa (DB|App)? DB
+> Mo.. domande forti.. Come lo vuoi? MongoDB
+> Namo de username: admin
+> Namo de password: a3f08c25-a3b7-4797-aa55-5618fcc727a0
+> Namo de dbname: mydb
+Pulling MongoDB image
+Using default tag: latest
+latest: Pulling from library/mongo
+a4a2c7a57ed8: Pull complete 
+1354176b189d: Pull complete 
+20a94d566154: Pull complete 
+44e46f202d7a: Pull complete 
+51d926c33a80: Pull complete 
+f2d249179d72: Pull complete 
+db6ffb85f76e: Pull complete 
+10ce81709903: Pull complete 
+Digest: sha256:5a54d0323fe207d15dc48773a7b9e7e519f83ad94a19c2ddac201d7aae109eb1
+Status: Downloaded newer image for mongo:latest
+docker.io/library/mongo:latest
+Volume created successfully
+Running MongoDB container
+Container ask--20240221161846 created successfully
+Connection String: "mongodb://admin:a3f08c25-a3b7-4797-aa55-5618fcc727a0@localhost:5432/mydb"
+Connection String: Ok(())
+> Vuoi continuà? Avoja
+> Che devi da fa? Deje de container
+> Come lo devo da chiama? optimum
+> Se vabbè.. Che te piace fa (DB|App)? DB
+> Mo.. domande forti.. Come lo vuoi? Redis
+> Namo de username: admin
+> Namo de password: 098ff847-b65e-46db-a8ba-9ad3f766287c
+> Namo de dbname: mydb
+Pulling Redis image
+Using default tag: latest
+latest: Pulling from library/redis
+f546e941f15b: Already exists 
+08df40659127: Pull complete 
+4fe7fa4aab04: Pull complete 
+57dea0f129a5: Pull complete 
+f45ab649e450: Pull complete 
+983f900bbc88: Pull complete 
+4f4fb700ef54: Pull complete 
+f7f7da262cdb: Pull complete 
+Digest: sha256:e647cfe134bf5e8e74e620f66346f93418acfc240b71dd85640325cb7cd01402
+Status: Downloaded newer image for redis:latest
+docker.io/library/redis:latest
+Volume created successfully
+Running Redis container
+Container optimum--20240221161948 created successfully
+Connection String: "redis://admin:098ff847-b65e-46db-a8ba-9ad3f766287c@localhost:5432/mydb"
+Connection String: Ok(())

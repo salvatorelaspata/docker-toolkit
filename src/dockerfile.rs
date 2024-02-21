@@ -33,7 +33,7 @@ impl Dockerfile {
     }
 }
 
-fn create_nginx_instruction(docker_file: &Dockerfile) {
+fn create_nginx_instruction(docker_file: &mut Dockerfile) {
     docker_file.add_instruction(
         String::from("FROM"),
         vec![
@@ -60,7 +60,7 @@ fn create_nginx_instruction(docker_file: &Dockerfile) {
     docker_file.add_instruction(String::from("EXPOSE"), vec!["4321".to_string()]);
 }
 
-fn create_node_instruction(docker_file: &Dockerfile) {
+fn create_node_instruction(docker_file: &mut Dockerfile) {
     docker_file.add_instruction(
         String::from("FROM"),
         vec![
@@ -88,8 +88,10 @@ fn create_node_instruction(docker_file: &Dockerfile) {
 pub fn create_node_dockerfile() -> Dockerfile {
     let mut docker_file = Dockerfile::new();
 
-    create_node_instruction(&docker_file);
-    create_nginx_instruction(&docker_file);
+    // create_node_instruction(&docker_file);
+    // create_nginx_instruction(&docker_file);
+    create_nginx_instruction(&mut docker_file);
+    create_node_instruction(&mut docker_file);
 
     docker_file
 }

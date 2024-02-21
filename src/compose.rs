@@ -72,19 +72,20 @@ impl Compose {
             let service_path = format!("{}/{}", path, service.name);
             let dockerfile_path = format!("{}/Dockerfile", service_path);
             std::fs::create_dir_all(service_path).unwrap();
-            let mut dockerfile_content;
+            let dockerfile_content;
             // create dockerfile if service is an app
             match service.service_type {
                 ServiceType::APP => {
-                    dockerfile_content = create_node_dockerfile(with_nginx).to_string();
+                    dockerfile_content = create_node_dockerfile().to_string();
+                    let mut dockerfile_file = std::fs::File::create(dockerfile_path).unwrap();
+                    dockerfile_file
+                        .write_all(dockerfile_content.as_bytes())
+                        .unwrap();
                 }
                 _ => {}
             }
 
-            let mut dockerfile_file = std::fs::File::create(dockerfile_path).unwrap();
-            dockerfile_file
-                .write_all(dockerfile_content.as_bytes())
-                .unwrap();
+            
         }
     }
 
